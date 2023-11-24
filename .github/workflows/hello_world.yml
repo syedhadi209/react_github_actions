@@ -24,4 +24,4 @@ jobs:
     steps:
       - name: good bye
         run: echo "good bye"
-        shell: bashs
+        shell: bash
