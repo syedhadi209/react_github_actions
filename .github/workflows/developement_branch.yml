@@ -1,0 +1,41 @@
+name: Merge PR to Development
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Merge PR to Development
+        run: |
+          # Set the development branch name
+          DEVELOPMENT_BRANCH="development"
+
+          # Fetch the development branch
+          git fetch origin $DEVELOPMENT_BRANCH:$DEVELOPMENT_BRANCH
+
+          # Switch to the development branch
+          git checkout $DEVELOPMENT_BRANCH
+
+          # Merge the closed PR branch into the development branch
+          git merge ${{ github.event.pull_request.head.ref }}
+
+          # Push changes to the development branch
+          git push origin $DEVELOPMENT_BRANCH
+
+      - name: Cleanup Local Changes
+        run: git reset --hard && git clean -ffdx
+
+      - name: Cleanup Remote Branch
+        run: git push origin --delete ${{ github.event.pull_request.head.ref }}
+
+      - name: Clean up
+        run: |
+          # Additional cleanup steps if needed
